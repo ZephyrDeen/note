@@ -145,11 +145,11 @@ input.error {
 }
 
 .register {
-  display: none;
+  display: flex;
 }
 
 .welcome {
-  display: none;
+  display: flex;
   flex-direction: column;
   font-size: 6rem;
 

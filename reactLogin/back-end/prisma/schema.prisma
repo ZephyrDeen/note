@@ -14,12 +14,25 @@ datasource db {
 }
 
 model User {
-  id        String @id @default(uuid())
-  username  String @unique
+  id        String   @id @default(uuid())
+  username  String   @unique
   password  String
+  notes     Note[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id        String   @id @default(uuid())
+  title     String
+  content   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Bcrypt {
-  id          String @id
-  saltRounds  Int
+  id         String @id
+  saltRounds Int
 }

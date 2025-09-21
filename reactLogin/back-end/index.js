@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { login } from './src/api/login.js';
 import { register } from './src/api/register.js';
+import { notesRouter } from './src/api/notes.js';
 import prismaClientPackage from '@prisma/client';
 const { Prisma } = prismaClientPackage;
 import { authToken } from './src/utils/authToken.js';
@@ -21,6 +22,7 @@ app.get('/health', (req, res) => {
 
 app.post('/api/login', authToken, login);
 app.post('/api/register', register);
+app.use('/api/notes', notesRouter);
 
 // 专门用于验证 token 的路由
 app.get('/api/verify-token', authToken, (req, res) => {

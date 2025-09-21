@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { gsap } from 'gsap'
 import { useAuth } from '../context/AuthContext'
+import { showError, showCorrect } from '../utils/animations'
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -12,17 +12,10 @@ function Register() {
   const [error, setError] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const registerRef = useRef(null)
   const { register } = useAuth()
   const navigate = useNavigate()
 
-  useEffect(() => {
-    // 入场动画
-    gsap.fromTo(registerRef.current,
-      { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, duration: 0.5, display: 'flex' }
-    )
-  }, [])
+
 
   const handleChange = (e) => {
     setFormData({
@@ -36,12 +29,12 @@ function Register() {
     e.preventDefault()
 
     if (!formData.username || !formData.password || !formData.confirmPassword) {
-      showErrorAnimation()
+      showError()
       return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      showErrorAnimation()
+      showError()
       return
     }
 
@@ -49,77 +42,26 @@ function Register() {
     const result = await register(formData.username, formData.password)
 
     if (result.success) {
-      showSuccessAnimation()
+      showCorrect()
       // 清空表单
       setFormData({ username: '', password: '', confirmPassword: '' })
-      // 页面切换动画
-      const timeline = gsap.timeline()
-      timeline.to(registerRef.current, {
-        duration: 0.5,
-        display: "none",
-        opacity: 0,
-        x: 0,
-        y: -40,
-        onComplete: () => navigate('/login')
-      })
+      // 延迟跳转，让成功动画播放完
+      setTimeout(() => navigate('/login'), 2000)
     } else {
-      showErrorAnimation()
+      showError()
     }
     setLoading(false)
   }
 
-  const showErrorAnimation = () => {
-    const timeline = gsap.timeline()
-    timeline.to("body", {
-      duration: 0,
-      background: "#fff"
-    })
-    timeline.to("body", {
-      duration: 1,
-      background: "#ff7875",
-      ease: "power2.inOut"
-    })
-    timeline.to("body", {
-      duration: 1,
-      background: "#fff",
-      ease: "power2.inOut"
-    })
-  }
 
-  const showSuccessAnimation = () => {
-    const timeline = gsap.timeline()
-    timeline.to("body", {
-      duration: 0,
-      background: "#fff"
-    })
-    timeline.to("body", {
-      duration: 1,
-      background: "#52c41a",
-      ease: "power2.inOut"
-    })
-    timeline.to("body", {
-      duration: 1,
-      background: "#fff",
-      ease: "power2.inOut"
-    })
-  }
 
   const handleSwitchToLogin = (e) => {
     e.preventDefault()
-    // 注册到登录的页面切换动画
-    const timeline = gsap.timeline()
-    timeline.to(registerRef.current, {
-      duration: 0.5,
-      display: "none",
-      opacity: 0,
-      x: 0,
-      y: -40,
-      onComplete: () => navigate('/login')
-    })
+    navigate('/login')
   }
 
   return (
-    <div className="register" ref={registerRef}>
+    <div className="register">
       <div className="register-info">
         <div className="info">
           <div className="username">

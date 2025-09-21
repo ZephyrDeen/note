@@ -18,7 +18,9 @@ async function login(req, res) {
     }
 
     const token = genToken({
-      username, password
+      id: user.id,
+      username,
+      password
     }, process.env.TOKEN_EXPIRE_TIME || '1h');
 
     return res.status(200).json({

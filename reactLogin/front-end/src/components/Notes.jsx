@@ -1,131 +1,119 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { gsap } from 'gsap'
 import { useAuth } from '../context/AuthContext'
 
 function Notes() {
-  const [notes, setNotes] = useState([
-    { id: 1, title: 'Welcome Note', content: 'This is your first note! You can create, edit, and delete notes here.', date: new Date().toLocaleDateString() },
-    { id: 2, title: 'React Learning', content: 'Learning React Router, Context API, and GSAP animations.', date: new Date().toLocaleDateString() }
-  ])
   const [showAddForm, setShowAddForm] = useState(false)
   const [newNote, setNewNote] = useState({ title: '', content: '' })
 
-  const notesRef = useRef(null)
-  const { user, logout } = useAuth()
+  const {
+    user,
+    logout,
+    notes,
+    notesLoading,
+    fetchNotes,
+    createNote,
+    deleteNote
+  } = useAuth()
   const navigate = useNavigate()
 
+  // 组件加载时获取笔记
   useEffect(() => {
-    // 入场动画
-    gsap.fromTo(notesRef.current,
-      { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, duration: 0.5, display: 'block' }
-    )
+    fetchNotes()
   }, [])
 
-  const handleAddNote = () => {
-    if (newNote.title && newNote.content) {
-      const note = {
-        id: Date.now(),
-        title: newNote.title,
-        content: newNote.content,
-        date: new Date().toLocaleDateString()
-      }
-      setNotes([note, ...notes])
+  const handleAddNote = async () => {
+    if (!newNote.title || !newNote.content) return
+
+    const result = await createNote(newNote)
+    if (result.success) {
       setNewNote({ title: '', content: '' })
       setShowAddForm(false)
     }
   }
 
-  const handleDeleteNote = (id) => {
-    setNotes(notes.filter(note => note.id !== id))
+  const handleDeleteNote = async (id) => {
+    await deleteNote(id)
   }
 
   const handleSignOut = () => {
-    // 退出登录的页面切换动画
-    const timeline = gsap.timeline()
-    timeline.to(notesRef.current, {
-      duration: 0.5,
-      display: "none",
-      opacity: 0,
-      x: 0,
-      y: -40,
-      onComplete: () => {
-        logout()
-        navigate('/login')
-      }
-    })
+    logout()
+    navigate('/login')
   }
 
   const handleGoBack = () => {
-    // 返回欢迎页的页面切换动画
-    const timeline = gsap.timeline()
-    timeline.to(notesRef.current, {
-      duration: 0.5,
-      display: "none",
-      opacity: 0,
-      x: 0,
-      y: -40,
-      onComplete: () => navigate('/welcome')
-    })
+    navigate('/welcome')
+  }
+
+  if (notesLoading) {
+    return <div className="notes-page">Loading...</div>
   }
 
   return (
-    <div className="notes-page" ref={notesRef}>
+    <div className="notes-page">
       <div className="notes-header">
         <h1>My Notes</h1>
         <div>
           <button
+            className="to-register-btn"
             onClick={() => setShowAddForm(!showAddForm)}
-            className="register-btn"
           >
-            <span>{showAddForm ? 'Cancel' : 'Add Note'}</span>
+            {showAddForm ? 'Cancel' : 'Add Note'}
           </button>
-          <span className="to-register-btn" onClick={handleGoBack}>Back</span>
           <button
-            onClick={handleSignOut}
-            className="login-btn"
+            className="to-login-btn"
+            onClick={handleGoBack}
           >
-            <span>Sign Out</span>
+            Back to Welcome
+          </button>
+          <button
+            className="to-login-btn"
+            onClick={handleSignOut}
+          >
+            Sign Out
           </button>
         </div>
       </div>
 
       {showAddForm && (
-        <div className="info">
+        <div className="add-note-form">
           <input
             type="text"
-            placeholder="Note Title"
+            placeholder="Note title..."
             value={newNote.title}
             onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
+            className="note-input"
           />
           <textarea
-            placeholder="Note Content"
+            placeholder="Write your note here..."
             value={newNote.content}
             onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-            rows="4"
+            className="note-textarea"
+            rows={4}
           />
-          <button
-            onClick={handleAddNote}
-            className="login-btn"
-          >
-            <span>Save Note</span>
+          <button onClick={handleAddNote} className="login-btn">
+            Save Note
           </button>
         </div>
       )}
 
-      <div>
+      <div className="notes-list">
         {notes.length === 0 ? (
           <p>No notes yet. Create your first note!</p>
         ) : (
-          notes.map(note => (
-            <div key={note.id}>
+          notes.map((note) => (
+            <div key={note.id} className="note-item">
               <h3>{note.title}</h3>
               <p>{note.content}</p>
-              <small>Created: {note.date}</small>
-              <button onClick={() => handleDeleteNote(note.id)} className="to-login-btn">
-                Delete
-              </button>
+              <div className="note-meta">
+                <span>Created: {new Date(note.createdAt).toLocaleDateString()}</span>
+                <button
+                  onClick={() => handleDeleteNote(note.id)}
+                  className="delete-btn"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           ))
         )}

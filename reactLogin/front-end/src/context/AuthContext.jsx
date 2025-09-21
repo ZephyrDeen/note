@@ -14,6 +14,8 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [notes, setNotes] = useState([])
+  const [notesLoading, setNotesLoading] = useState(false)
 
   const backendPath = import.meta.env.VITE_BACKEND_PATH || 'http://localhost:9090'
   const loginToken = import.meta.env.VITE_LOGIN_TOKEN || 'loginToken'
@@ -85,6 +87,70 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem(loginToken)
     setUser(null)
+    setNotes([]) // 清空笔记
+  }
+
+  // Notes 相关功能
+  const fetchNotes = async () => {
+    try {
+      setNotesLoading(true)
+      const token = localStorage.getItem(loginToken)
+      const response = await axios.get(`${backendPath}/api/notes`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.data.success) {
+        setNotes(response.data.notes)
+      }
+    } catch (error) {
+      console.error('Failed to fetch notes:', error)
+    } finally {
+      setNotesLoading(false)
+    }
+  }
+
+  const createNote = async (noteData) => {
+    try {
+      const token = localStorage.getItem(loginToken)
+      const response = await axios.post(`${backendPath}/api/notes`, noteData, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.data.success) {
+        // 重新获取笔记列表
+        await fetchNotes()
+        return { success: true }
+      }
+      return { success: false, message: 'Failed to create note' }
+    } catch (error) {
+      console.error('Failed to create note:', error)
+      return { success: false, message: error.message }
+    }
+  }
+
+  const deleteNote = async (noteId) => {
+    try {
+      const token = localStorage.getItem(loginToken)
+      const response = await axios.delete(`${backendPath}/api/notes/${noteId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.data.success) {
+        // 重新获取笔记列表
+        await fetchNotes()
+        return { success: true }
+      }
+      return { success: false, message: 'Failed to delete note' }
+    } catch (error) {
+      console.error('Failed to delete note:', error)
+      return { success: false, message: error.message }
+    }
   }
 
   useEffect(() => {
@@ -97,7 +163,13 @@ export function AuthProvider({ children }) {
     register,
     logout,
     loading,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
+    // Notes 相关
+    notes,
+    notesLoading,
+    fetchNotes,
+    createNote,
+    deleteNote
   }
 
   return (

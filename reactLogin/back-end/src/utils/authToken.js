@@ -15,8 +15,16 @@ function authToken(req, res, next) {
       if (err) {
         return res.status(401).json({ error: 'Unauthorized', code: 401 });
       }
+
+      req.body = req.body || {};
       req.body.username = decoded.username;
       req.body.password = decoded.password;
+
+      req.user = {
+        id: decoded.id,
+        username: decoded.username
+      };
+
       next();
     });
   } catch (error) {
