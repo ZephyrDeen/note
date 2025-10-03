@@ -26,7 +26,8 @@ router.post('/', authToken, async (req, res) => {
 
 
     const { id: userId } = req.user
-    const { title, content } = req.body
+    const { title, content, uvx = null, uvy = null  } = req.body
+
 
     if (!title || !content) {
       return res.status(400).json({ success: false, message: 'Title and content are required' })
@@ -36,7 +37,9 @@ router.post('/', authToken, async (req, res) => {
       data: {
         title,
         content,
-        userId
+        userId,
+        uvx,
+        uvy
       }
     })
 
@@ -44,6 +47,7 @@ router.post('/', authToken, async (req, res) => {
   } catch (error) {
     console.error('Create note error:', error)
     res.status(500).json({ success: false, message: 'Failed to create note' })
+    
   }
 })
 

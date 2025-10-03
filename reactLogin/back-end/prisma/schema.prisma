@@ -29,9 +29,8 @@ model Note {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   // 3D地图位置信息
-  x         Float? // 3D空间X坐标
-  y         Float? // 3D空间Y坐标  
-  z         Float? // 3D空间Z坐标
+  uvx        Float?
+  uvy        Float? 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

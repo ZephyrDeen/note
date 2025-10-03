@@ -1,10 +1,12 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useGLTF } from '@react-three/drei'
+// import Marker from './Marker'
 
-
-export function LowPolyEarth(props) {
-  const group = useRef();
+export default function LowPolyEarth({ onPick, ...props }) {
+  const group = useRef()
   const { nodes, materials } = useGLTF('/earth-v2.glb')
+  const [uv, setUv] = useState(null)
+
   return (
     <group ref={group} {...props} dispose={null}>
       <mesh
@@ -16,10 +18,11 @@ export function LowPolyEarth(props) {
         scale={100}
         onClick={(e) => {
           if (e.uv) {
-            console.log('点击 UV:', e.uv.x.toFixed(3), e.uv.y.toFixed(3))
+            onPick?.(e.uv)
           }
         }}
       />
+      {/* <Marker uv={uv} /> */}
     </group>
   )
 }

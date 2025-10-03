@@ -45,6 +45,10 @@ function Notes() {
     navigate('/welcome')
   }
 
+  const handleGoToSingleNote = (id) => {
+    navigate(`/notes/${id}`)
+  }
+
   if (notesLoading) {
     return <div className="notes-page">Loading...</div>
   }
@@ -102,7 +106,7 @@ function Notes() {
           <p>No notes yet. Create your first note!</p>
         ) : (
           notes.map((note) => (
-            <div key={note.id} className="note-item">
+            <div key={note.id} className="note-item" onClick={() => handleGoToSingleNote(note.id)}>
               <h3>{note.title}</h3>
               <p>{note.content}</p>
               <div className="note-meta">

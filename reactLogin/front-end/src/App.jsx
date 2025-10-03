@@ -4,6 +4,7 @@ import Login from './components/Login'
 import Register from './components/Register'
 import Welcome from './components/Welcome'
 import Notes from './components/Notes'
+import SingleNote from './components/SingleNote'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import './App.scss'
 
@@ -45,6 +46,14 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <Notes />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notes/:id"
+          element={
+            <ProtectedRoute>
+              <SingleNote />
             </ProtectedRoute>
           }
         />
