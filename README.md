@@ -9,6 +9,7 @@ A spatial note-taking app that lets you pin your thoughts to locations on an int
 - 🗺️ **2D Map View** - View note locations on a flat map projection
 - 🔐 **User Authentication** - JWT token-based login/register with bcrypt password hashing
 - ✏️ **Note Management** - Full CRUD operations for your notes
+- 🔑 **Secure Key Generation** - Cryptographically secure random bytes using Node.js `crypto` module
 
 ## 🛠️ Tech Stack
 
