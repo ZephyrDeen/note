@@ -9,14 +9,16 @@ export default function EarthImg({ uv, setUv, src = '/texture.jpg' }) {
     const y = e.clientY - rect.top
 
     const u = x / rect.width
-    const v = y / rect.height
+    // 因为图片翻转了，所以点击位置的v需要反转
+    const v = 1 - (y / rect.height)
 
     console.log("点击图片更新 uv:", { u, v })
     setUv({ x: u, y: v })
   }
 
   const leftPercent = uv ? `${(uv.x * 100).toFixed(2)}%` : null
-  const topPercent  = uv ? `${(uv.y * 100).toFixed(2)}%` : null
+  // 因为图片翻转了，标记点位置也需要反转Y坐标
+  const topPercent = uv ? `${((1 - uv.y) * 100).toFixed(2)}%` : null
 
   return (
     <div
