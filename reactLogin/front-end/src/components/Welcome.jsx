@@ -19,7 +19,6 @@ function Welcome() {
 
   useEffect(() => {
     setNewNote((prev) => ({ ...prev, uv }))
-    console.log(uv)
   }, [uv])
 
 
