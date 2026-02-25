@@ -7,8 +7,7 @@ const router = express.Router()
 // 获取用户的所有笔记
 router.get('/', authToken, async (req, res) => {
   try {
-
-    const { userId } = req.user
+    const userId = req.user.id
     const notes = await prisma.note.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' }
@@ -20,14 +19,15 @@ router.get('/', authToken, async (req, res) => {
   }
 })
 
-// 创建新笔记
+// 创建新笔记 (暂停 - 防止滥用)
 router.post('/', authToken, async (req, res) => {
+  // 暂时禁用 - 取消下面这行注释即可恢复
+  return res.status(403).json({ success: false, message: 'Adding notes is temporarily disabled for demo purposes' })
+  
+  /*
   try {
-
-
     const { id: userId } = req.user
-    const { title, content, uvx = null, uvy = null  } = req.body
-
+    const { title, content, uvx = null, uvy = null } = req.body
 
     if (!title || !content) {
       return res.status(400).json({ success: false, message: 'Title and content are required' })
@@ -47,8 +47,8 @@ router.post('/', authToken, async (req, res) => {
   } catch (error) {
     console.error('Create note error:', error)
     res.status(500).json({ success: false, message: 'Failed to create note' })
-    
   }
+  */
 })
 
 // 更新笔记
@@ -79,8 +79,12 @@ router.put('/:id', authToken, async (req, res) => {
   }
 })
 
-// 删除笔记
+// 删除笔记 (暂停 - 防止滥用)
 router.delete('/:id', authToken, async (req, res) => {
+  // 暂时禁用 - 取消下面这行注释即可恢复
+  return res.status(403).json({ success: false, message: 'Deleting notes is temporarily disabled for demo purposes' })
+  
+  /*
   try {
     const userId = req.user.id
     const noteId = req.params.id
@@ -103,6 +107,7 @@ router.delete('/:id', authToken, async (req, res) => {
     console.error('Delete note error:', error)
     res.status(500).json({ success: false, message: 'Failed to delete note' })
   }
+  */
 })
 
 export { router as notesRouter } 

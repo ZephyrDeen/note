@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import prisma from '../lib/prisma.js';
 
+
 async function encryptPassword(password) {
   try {
     // 1. Fetch the salt rounds configuration from the database.

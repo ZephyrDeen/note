@@ -6,7 +6,6 @@ import Welcome from './components/Welcome'
 import Notes from './components/Notes'
 import SingleNote from './components/SingleNote'
 import { AuthProvider, useAuth } from './context/AuthContext'
-import './App.scss'
 
 
 function ProtectedRoute({ children }) {
