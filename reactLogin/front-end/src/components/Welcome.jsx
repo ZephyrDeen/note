@@ -1,27 +1,22 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Canvas } from "@react-three/fiber";
-import { useGLTF, OrbitControls, Environment, Bounds } from "@react-three/drei";
+import { OrbitControls, Environment, Bounds } from "@react-three/drei";
 import LowPolyEarth from '../earth/LowPolyEarth'
 import { Suspense, useState, useEffect } from "react";
 import EarthImg from '../earth/earthImg'
 import NotesCard from '../utils/notesCard'
-// import Marker from '../earth/Marker'
 import AddNote from '../utils/AddNote'
 
-
 function Welcome() {
-  const { user, logout, createNote } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [uv, setUv] = useState(null)
   const [newNote, setNewNote] = useState({ title: '', content: '', uv: uv })
 
-
   useEffect(() => {
     setNewNote((prev) => ({ ...prev, uv }))
   }, [uv])
-
-
 
   const handleSignOut = () => {
     logout()
@@ -43,8 +38,8 @@ function Welcome() {
           <div className="flex items-center justify-between">
             {/* Logo & Welcome */}
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">N</span>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                <span className="text-white font-bold text-lg">🌍</span>
               </div>
               <div>
                 <h1 className="text-white font-semibold text-lg tracking-wide">Welcome back</h1>
@@ -95,7 +90,7 @@ function Welcome() {
         {uv && (
           <div className="absolute bottom-6 left-6 bg-black/50 backdrop-blur-md rounded-xl px-4 py-3 border border-white/10">
             <p className="text-violet-300 text-sm font-mono">
-              Selected: ({uv.x.toFixed(3)}, {uv.y.toFixed(3)})
+              📍 Selected: ({uv.x.toFixed(3)}, {uv.y.toFixed(3)})
             </p>
           </div>
         )}
@@ -119,4 +114,4 @@ function Welcome() {
   )
 }
 
-export default Welcome 
+export default Welcome

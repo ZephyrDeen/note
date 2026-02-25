@@ -64,6 +64,12 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 9090;
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+// 本地开发时启动服务器
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
+
+// Vercel Serverless 导出
+export default app;

@@ -1,17 +1,17 @@
 import { useAuth } from '../context/AuthContext'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import GalaxyBackground from './GalaxyBackground'
 
 // 2D地图组件，显示笔记位置
 function LocationMap({ uvx, uvy, src = '/texture.jpg' }) {
   if (!uvx || !uvy) return null
 
   const leftPercent = `${(uvx * 100).toFixed(2)}%`
-  // 因为图片翻转了，标记点位置也需要反转Y坐标
   const topPercent = `${((1 - uvy) * 100).toFixed(2)}%`
 
   return (
-    <div className="bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden">
+    <div className="bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden">
       <div className="h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500"></div>
       <div className="p-4">
         <h3 className="text-white font-semibold mb-3 flex items-center gap-2">
@@ -37,7 +37,6 @@ function LocationMap({ uvx, uvy, src = '/texture.jpg' }) {
               transform: 'scaleY(-1)'
             }}
           />
-          {/* 标记点 */}
           <div
             className="absolute w-5 h-5 rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 border-[3px] border-white shadow-[0_0_20px_rgba(139,92,246,0.6),0_0_40px_rgba(139,92,246,0.3)] animate-pulse"
             style={{
@@ -46,7 +45,6 @@ function LocationMap({ uvx, uvy, src = '/texture.jpg' }) {
               transform: 'translate(-50%, -50%)'
             }}
           />
-          {/* 十字准星 */}
           <div
             className="absolute w-10 h-10 border-2 border-white/50 rounded-full pointer-events-none"
             style={{
@@ -115,28 +113,28 @@ function SingleNote() {
 
   if (notesLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <GalaxyBackground />
+        <div className="relative z-10 text-white text-xl">Loading...</div>
       </div>
     )
   }
 
   if (!note) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-        <nav className="bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+      <div className="min-h-screen bg-black relative overflow-hidden">
+        <GalaxyBackground />
+        <nav className="relative z-50 bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0">
           <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">N</span>
-                </div>
-                <h1 className="text-white font-semibold text-xl">Note Not Found</h1>
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
+                <span className="text-white font-bold text-lg">❓</span>
               </div>
+              <h1 className="text-white font-semibold text-xl">Note Not Found</h1>
             </div>
           </div>
         </nav>
-        <div className="flex flex-col items-center justify-center py-32">
+        <div className="relative z-10 flex flex-col items-center justify-center py-32">
           <div className="w-24 h-24 mb-6 rounded-full bg-white/5 flex items-center justify-center">
             <span className="text-5xl">🔍</span>
           </div>
@@ -154,14 +152,16 @@ function SingleNote() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      <GalaxyBackground starCount={150} />
+
       {/* 导航栏 */}
-      <nav className="bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+      <nav className="relative z-50 bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">N</span>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                <span className="text-white font-bold text-lg">📄</span>
               </div>
               <h1 className="text-white font-semibold text-xl">Note Details</h1>
             </div>
@@ -185,9 +185,8 @@ function SingleNote() {
       </nav>
 
       {/* 笔记内容 */}
-      <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl border border-white/10 overflow-hidden">
-          {/* 顶部装饰 */}
+      <div className="relative z-10 max-w-4xl mx-auto px-6 py-12">
+        <div className="bg-slate-900/40 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden shadow-xl">
           <div className="h-2 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500"></div>
 
           <div className="p-8">
@@ -198,7 +197,7 @@ function SingleNote() {
                   type="text"
                   value={editData.title}
                   onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                  className="w-full text-3xl font-bold bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20"
+                  className="w-full text-3xl font-bold bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-violet-500/50 focus:shadow-[0_0_20px_5px_rgba(139,92,246,0.15)]"
                   placeholder="Note title..."
                 />
               ) : (
@@ -232,7 +231,7 @@ function SingleNote() {
                 <textarea
                   value={editData.content}
                   onChange={(e) => setEditData({ ...editData, content: e.target.value })}
-                  className="w-full min-h-[300px] bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-gray-200 leading-relaxed focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 resize-none"
+                  className="w-full min-h-[300px] bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-gray-200 leading-relaxed focus:outline-none focus:border-violet-500/50 focus:shadow-[0_0_20px_5px_rgba(139,92,246,0.15)] resize-none"
                   placeholder="Write your note content..."
                 />
               ) : (

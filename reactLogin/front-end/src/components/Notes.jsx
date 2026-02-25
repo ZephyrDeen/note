@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import GalaxyBackground from './GalaxyBackground'
 
 function Notes() {
   const [showAddForm, setShowAddForm] = useState(false)
@@ -17,7 +18,6 @@ function Notes() {
   } = useAuth()
   const navigate = useNavigate()
 
-  // 组件加载时获取笔记
   useEffect(() => {
     fetchNotes()
   }, [])
@@ -50,18 +50,25 @@ function Notes() {
   }
 
   if (notesLoading) {
-    return <div className="notes-page">Loading...</div>
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <GalaxyBackground />
+        <div className="relative z-10 text-white text-xl">Loading...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      <GalaxyBackground starCount={150} />
+
       {/* 导航栏 */}
-      <nav className="bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
+      <nav className="relative z-50 bg-black/30 backdrop-blur-md border-b border-white/10 sticky top-0">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">N</span>
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                <span className="text-white font-bold text-lg">📝</span>
               </div>
               <h1 className="text-white font-semibold text-xl">My Notes</h1>
             </div>
@@ -93,10 +100,10 @@ function Notes() {
         </div>
       </nav>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-8">
         {/* 添加笔记表单 */}
         {showAddForm && (
-          <div className="mb-8 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden">
+          <div className="mb-8 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden shadow-xl">
             <div className="h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500"></div>
             <div className="p-6">
               <h2 className="text-xl font-bold text-white mb-6">Create New Note</h2>
@@ -106,18 +113,18 @@ function Notes() {
                   placeholder="Note title..."
                   value={newNote.title}
                   onChange={(e) => setNewNote({ ...newNote, title: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50 focus:shadow-[0_0_20px_5px_rgba(139,92,246,0.15)] transition-all"
                 />
                 <textarea
                   placeholder="Write your note here..."
                   value={newNote.content}
                   onChange={(e) => setNewNote({ ...newNote, content: e.target.value })}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20 transition-all resize-none"
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-violet-500/50 focus:shadow-[0_0_20px_5px_rgba(139,92,246,0.15)] transition-all resize-none"
                   rows={4}
                 />
                 <button
                   onClick={handleAddNote}
-                  className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-violet-500/25"
+                  className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40"
                 >
                   💾 Save Note
                 </button>
@@ -136,7 +143,7 @@ function Notes() {
             <p className="text-gray-400 mb-6">Create your first note to get started!</p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-violet-500/25"
+              className="px-6 py-3 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white rounded-xl font-semibold transition-all duration-200 shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
             >
               + Create Note
             </button>
@@ -146,7 +153,7 @@ function Notes() {
             {notes.map((note) => (
               <div
                 key={note.id}
-                className="group bg-white/10 backdrop-blur-md rounded-2xl border border-white/10 overflow-hidden hover:border-violet-500/50 hover:bg-white/15 transition-all duration-300"
+                className="group bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 overflow-hidden hover:border-violet-500/50 hover:bg-slate-900/60 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/10"
               >
                 <div className="h-1 bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500"></div>
                 <div className="p-5">
@@ -189,4 +196,4 @@ function Notes() {
   )
 }
 
-export default Notes 
+export default Notes
